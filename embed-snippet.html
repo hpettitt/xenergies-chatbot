@@ -1,0 +1,260 @@
+<!-- Xenergies Chatbot Widget -->
+<style>
+#xen-toggle {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #2d6a4f, #1b4332);
+  color: white; border: none; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(45,106,79,0.5);
+  z-index: 99999; transition: transform 0.2s, box-shadow 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+#xen-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(45,106,79,0.7); }
+#xen-toggle::before {
+  content: ''; position: absolute; width: 100%; height: 100%;
+  border-radius: 50%; background: rgba(45,106,79,0.3);
+  animation: xen-pulse 2s ease-out infinite;
+}
+@keyframes xen-pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+#xen-window {
+  display: none; position: fixed; bottom: 90px; right: 24px;
+  width: 380px; max-height: 580px; background: #0f172a;
+  border-radius: 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+  z-index: 99998; flex-direction: column; overflow: hidden;
+  animation: xen-slide 0.25s ease; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+#xen-window.open { display: flex; }
+@keyframes xen-slide {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (max-width: 420px) {
+  #xen-window { bottom: 0; right: 0; width: 100vw; max-height: 100dvh; border-radius: 0; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+  #xen-toggle { bottom: 16px; right: 16px; }
+}
+#xen-header {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  padding: 14px 16px; display: flex; align-items: center;
+  justify-content: space-between; flex-shrink: 0;
+}
+#xen-header .xen-avatar {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0; position: relative;
+}
+#xen-header .xen-avatar .xen-dot {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 10px; height: 10px; background: #4ade80;
+  border: 2px solid #1b4332; border-radius: 50%;
+}
+#xen-header .xen-info { margin-left: 10px; flex: 1; }
+#xen-header .xen-info h3 { color: white; font-size: 13px; font-weight: 700; margin: 0; }
+#xen-header .xen-info p { color: rgba(216,243,220,0.85); font-size: 10px; margin: 2px 0 0; }
+.xen-badge {
+  background: rgba(255,255,255,0.12); color: white;
+  font-size: 9px; font-weight: 700; padding: 3px 8px;
+  border-radius: 6px; letter-spacing: 0.5px;
+}
+#xen-close {
+  background: none; border: none; color: rgba(255,255,255,0.7);
+  cursor: pointer; font-size: 18px; margin-left: 8px; padding: 2px;
+}
+#xen-close:hover { color: white; }
+#xen-messages {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 14px;
+  background: rgba(15,23,42,0.5); min-height: 220px; max-height: 360px;
+}
+@media (max-width: 420px) { #xen-messages { max-height: calc(100dvh - 220px); } }
+#xen-messages::-webkit-scrollbar { width: 4px; }
+#xen-messages::-webkit-scrollbar-track { background: transparent; }
+#xen-messages::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+.xen-row { display: flex; gap: 8px; align-items: flex-start; }
+.xen-row.xen-user { flex-direction: row-reverse; }
+.xen-bot-av {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: #1e293b; border: 1px solid #334155; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #74c69d; margin-top: 2px;
+}
+.xen-bubble {
+  max-width: 82%; padding: 10px 14px; border-radius: 16px;
+  font-size: 13px; line-height: 1.55;
+}
+.xen-bubble.xen-bot { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; border-top-left-radius: 4px; }
+.xen-bubble.xen-user { background: #2d6a4f; color: white; border-top-right-radius: 4px; }
+.xen-bubble a { color: #74c69d; font-weight: 600; text-decoration: none; }
+.xen-bubble a:hover { text-decoration: underline; }
+.xen-bubble.xen-user a { color: #a7f3d0; }
+.xen-ts { font-size: 9px; color: #475569; font-family: monospace; margin-top: 4px; padding: 0 2px; }
+.xen-row.xen-user .xen-ts { text-align: right; }
+.xen-typing { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+.xen-typing span { width: 7px; height: 7px; border-radius: 50%; background: #475569; animation: xen-bounce 1.2s infinite; }
+.xen-typing span:nth-child(2) { animation-delay: 0.2s; }
+.xen-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes xen-bounce { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+#xen-suggestions {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px 16px 4px; background: #0f172a; flex-shrink: 0;
+}
+.xen-chip {
+  background: #1e293b; border: 1px solid #334155; border-radius: 20px;
+  padding: 5px 11px; font-size: 11px; cursor: pointer; color: #74c69d;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.xen-chip:hover { background: #2d6a4f; border-color: #2d6a4f; color: white; }
+#xen-input-area {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px; border-top: 1px solid #1e293b;
+  background: #0f172a; flex-shrink: 0;
+}
+#xen-input {
+  flex: 1; background: #1e293b; border: 1px solid #334155;
+  border-radius: 24px; padding: 9px 16px; font-size: 13px;
+  color: #e2e8f0; outline: none; transition: border-color 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+#xen-input::placeholder { color: #475569; }
+#xen-input:focus { border-color: #40916c; }
+#xen-send {
+  background: linear-gradient(135deg, #2d6a4f, #1b4332); color: white;
+  border: none; border-radius: 50%; width: 36px; height: 36px;
+  cursor: pointer; font-size: 14px; flex-shrink: 0;
+  transition: opacity 0.2s, transform 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+#xen-send:hover { opacity: 0.85; transform: scale(1.05); }
+#xen-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+</style>
+
+<button id="xen-toggle" title="Conseiller livres Xenergies">
+  <img id="xen-leaf" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%BF%3C/text%3E%3C/svg%3E" width="30" height="30" alt="" style="display:block;width:30px;height:30px;border:none;pointer-events:none;">
+  <span id="xen-x" style="display:none;color:white;font-size:22px;line-height:1;pointer-events:none;">✕</span>
+</button>
+
+<div id="xen-window">
+  <div id="xen-header">
+    <div class="xen-avatar">🌿<div class="xen-dot"></div></div>
+    <div class="xen-info">
+      <h3>Conseiller Xenergies</h3>
+      <p>Huiles essentielles doTERRA</p>
+    </div>
+    <span class="xen-badge">Xenergies IA</span>
+    <button id="xen-close" title="Fermer">✕</button>
+  </div>
+  <div id="xen-messages"></div>
+  <div id="xen-suggestions">
+    <button class="xen-chip" onclick="xenSend(this.textContent)">Anxiété &amp; stress</button>
+    <button class="xen-chip" onclick="xenSend(this.textContent)">Débutant en huiles</button>
+    <button class="xen-chip" onclick="xenSend(this.textContent)">Mon enfant a le TDAH</button>
+    <button class="xen-chip" onclick="xenSend(this.textContent)">Cuisiner avec les huiles</button>
+  </div>
+  <div id="xen-input-area">
+    <input id="xen-input" type="text" placeholder="Votre message..." maxlength="300" />
+    <button id="xen-send">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+(function() {
+  var API = "https://xenergies-chatbot.vercel.app";
+  var history = [], isOpen = false, greeted = false;
+  var tog = document.getElementById("xen-toggle");
+  var win = document.getElementById("xen-window");
+  var msgs = document.getElementById("xen-messages");
+  var inp = document.getElementById("xen-input");
+  var btn = document.getElementById("xen-send");
+  var sug = document.getElementById("xen-suggestions");
+
+  var leaf = document.getElementById("xen-leaf");
+  var xmark = document.getElementById("xen-x");
+
+  function openChat() {
+    isOpen = true; win.classList.add("open");
+    leaf.style.display = "none"; xmark.style.display = "block";
+    if (!greeted) {
+      addMsg("bot", "Bonjour ! Je suis votre conseiller livres Xenergies. 🌿\n\nDites-moi ce qui vous intéresse et je vous recommande le livre idéal parmi notre catalogue d'huiles essentielles doTERRA.");
+      greeted = true;
+    }
+    inp.focus();
+  }
+  function closeChat() {
+    isOpen = false; win.classList.remove("open");
+    leaf.style.display = "block"; xmark.style.display = "none";
+  }
+  tog.addEventListener("click", function() { isOpen ? closeChat() : openChat(); });
+  document.getElementById("xen-close").addEventListener("click", closeChat);
+
+  function ts() { return new Date().toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"}); }
+
+  function md(t) {
+    return t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+            .replace(/\n/g, "<br>");
+  }
+
+  function addMsg(role, text) {
+    var row = document.createElement("div");
+    row.className = "xen-row" + (role === "user" ? " xen-user" : "");
+    if (role === "bot") {
+      var av = document.createElement("div");
+      av.className = "xen-bot-av"; av.textContent = "X"; row.appendChild(av);
+    }
+    var col = document.createElement("div");
+    col.style.cssText = "display:flex;flex-direction:column;max-width:82%;" + (role === "user" ? "align-items:flex-end;" : "");
+    var bub = document.createElement("div");
+    bub.className = "xen-bubble xen-" + role;
+    bub.innerHTML = md(text); col.appendChild(bub);
+    var t = document.createElement("div");
+    t.className = "xen-ts"; t.textContent = ts(); col.appendChild(t);
+    row.appendChild(col); msgs.appendChild(row);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function showTyping() {
+    var row = document.createElement("div");
+    row.className = "xen-row"; row.id = "xen-typing";
+    var av = document.createElement("div");
+    av.className = "xen-bot-av"; av.textContent = "X"; row.appendChild(av);
+    var bub = document.createElement("div");
+    bub.className = "xen-bubble xen-bot";
+    bub.innerHTML = '<div class="xen-typing"><span></span><span></span><span></span></div>';
+    row.appendChild(bub); msgs.appendChild(row);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  function hideTyping() { var t = document.getElementById("xen-typing"); if (t) t.remove(); }
+
+  function xenSend(msg) {
+    if (!msg || !msg.trim()) return;
+    sug.style.display = "none";
+    addMsg("user", msg); inp.value = ""; btn.disabled = true; showTyping();
+    fetch(API + "/chat", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({message: msg, history: history})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      hideTyping();
+      addMsg("bot", d.error ? "Désolé, une erreur s'est produite. Veuillez réessayer." : d.reply);
+      if (d.history) history = d.history;
+    })
+    .catch(function() { hideTyping(); addMsg("bot", "Impossible de se connecter. Veuillez réessayer dans un moment."); })
+    .finally(function() { btn.disabled = false; inp.focus(); });
+  }
+
+  window.xenSend = xenSend;
+  btn.addEventListener("click", function() { xenSend(inp.value); });
+  inp.addEventListener("keydown", function(e) { if (e.key === "Enter") xenSend(inp.value); });
+})();
+</script>

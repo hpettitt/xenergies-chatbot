@@ -337,7 +337,8 @@
 <body>
 
 <button id="chat-toggle" title="Conseiller livres Xenergies">
-  <span id="toggle-icon" style="font-size:28px;line-height:1;">🌿</span>
+  <img id="chat-leaf" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%BF%3C/text%3E%3C/svg%3E" width="30" height="30" alt="" style="display:block;width:30px;height:30px;border:none;pointer-events:none;">
+  <span id="chat-x" style="display:none;color:white;font-size:22px;line-height:1;pointer-events:none;">✕</span>
 </button>
 
 <div id="chat-window">
@@ -386,13 +387,13 @@
   const suggestions = document.getElementById("suggestions");
   const closeBtn = document.getElementById("close-btn");
 
-  const CLOSED_ICON = document.getElementById("toggle-icon").outerHTML;
+  const leaf = document.getElementById("chat-leaf");
+  const xmark = document.getElementById("chat-x");
 
   function openChat() {
     isOpen = true;
     win.classList.add("open");
-    toggle.innerHTML = "✕";
-    toggle.style.fontSize = "20px";
+    leaf.style.display = "none"; xmark.style.display = "block";
     if (!hasGreeted) {
       addMessage("bot", "Bonjour ! Je suis votre conseiller livres Xenergies. 🌿\n\nDites-moi ce qui vous intéresse et je vous recommande le livre idéal parmi notre catalogue d'huiles essentielles doTERRA.");
       hasGreeted = true;
@@ -403,8 +404,7 @@
   function closeChat() {
     isOpen = false;
     win.classList.remove("open");
-    toggle.innerHTML = CLOSED_ICON;
-    toggle.style.fontSize = "";
+    leaf.style.display = "block"; xmark.style.display = "none";
   }
 
   toggle.addEventListener("click", () => isOpen ? closeChat() : openChat());
