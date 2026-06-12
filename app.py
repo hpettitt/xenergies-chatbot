@@ -4,7 +4,7 @@ GPT-4o-mini backend with WooCommerce order lookup (function calling)
 """
 import os, json, ssl, urllib.request
 from base64 import b64encode
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 
 KB_PATH = os.path.join(os.path.dirname(__file__), "knowledge_base.json")
@@ -219,6 +219,10 @@ def openai_chat(message, history):
 
 app = Flask(__name__)
 CORS(app, origins=["https://xenergies.com", "https://www.xenergies.com", "http://localhost:*"])
+
+@app.route("/")
+def index():
+    return redirect("/widget")
 
 @app.route("/health")
 def health():
