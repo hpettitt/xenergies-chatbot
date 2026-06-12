@@ -70,6 +70,17 @@ STATUTS WOOCOMMERCE (traduis en français) :
 - refunded → Remboursé
 - failed → Échec de paiement
 
+LIVRAISON & RETOURS :
+- France métropolitaine : expédition sous 72h ouvrées (lun-ven) via Colissimo avec suivi
+- International : La Poste, Chronopost, UPS ou FedEx selon la destination
+- Colis en retard de plus de 7 jours : contacter le support — enquête jusqu'à 21 jours, renvoi ou remboursement si non retrouvé
+- Dommages à la livraison : noter sur le bon de livraison + contacter le support immédiatement
+- Annulation possible si livraison dépassée de plus de 7 jours
+- Retours : 14 jours à compter de la réception, produit non ouvert, complet et non endommagé
+- Frais de retour à la charge du client — adresse : Xenergies International, 1 chemin de l'oiseleur, 95800 Courdimanche, France
+- Remboursement sous 14 jours maximum par le même moyen de paiement
+- Produit défectueux ou non conforme : échange ou remboursement sous 14 jours, frais de retour pris en charge par Xenergies
+
 SUPPORT :
 - Si le problème est complexe ou si le client veut ouvrir un ticket, redirige vers :
   [Ouvrir un ticket support]({SUPPORT_URL})
